@@ -11,7 +11,7 @@ import file.FileOutput;
  * 
  * Assignment: Java Review 3 Description:
  * 
- * CSIS2451
+ * CSIS2450
  * 
  * This assignment is an extension of the Java Review 2 assignment. In this
  * assignment you are asked to modify your Revew 2 assignment code to obtain the
