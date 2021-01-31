@@ -1,23 +1,21 @@
 package javaReview;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 import db.Keywords;
 import db.Query;
-import file.FileInput;
 import file.FileOutput;
 
 /**
  * 
- * Assignment: Java Review 3
- * Description: 
+ * Assignment: Java Review 3 Description:
  * 
- * This assignment is an extension of the Java Review 2 assignment. In this assignment 
- * you are asked to modify your Revew 2 assignment code to obtain the data for the 
- * temperatures report from a database instead of a csv file.
+ * This assignment is an extension of the Java Review 2 assignment. In this
+ * assignment you are asked to modify your Revew 2 assignment code to obtain the
+ * data for the temperatures report from a database instead of a csv file.
  * 
- * Resources: 
- * {@code Query}, A library used to send queries to a database.
+ * Resources: {@code Query}, A library used to send queries to a database.
  * {@code FileOutput}, Used to output to a text file.
  * 
  * All of the libraries were written by me except the mysql-connector-java API.
@@ -46,12 +44,16 @@ public class JavaReview3 {
 	private static String outputPath = "/Users/jorgejimenez/eclipse-workspace/Java review 3/src/resources/TemperaturesReport.txt";
 	private static String[][] data;
 
-	// Output and input. 
+	// Output and input.
 	private static FileOutput out;
 	private static StringBuilder sb;
 	private static String line;
+	private static String titleMonth;
+	private static String monthNumber;
 
 	public static void main(String[] arg) {
+
+		userinput();
 
 		String connectionString = "jdbc:mysql://localhost:3306/practice";
 		String dbLogin = "javauser";
@@ -62,14 +64,14 @@ public class JavaReview3 {
 		Query query = new Query(connectionString, dbLogin, dbPassword);
 
 		out = new FileOutput(outputPath);
-		//		in = new FileInput(path);
+		// in = new FileInput(path);
 
 		// Form SQL statement and get results
 		// in an two dimensional array.
-		query.select(columns).from(dbTable).where("month", Keywords.EQUAL, "12");
+		query.select(columns).from(dbTable).where("month", Keywords.EQUAL, monthNumber);
 		data = query.getQueryResults();
 
-		// Create the reports and print.	
+		// Create the reports and print.
 		reportOne();
 		reportTow();
 
@@ -78,10 +80,12 @@ public class JavaReview3 {
 		out.close();
 	}
 
-	//  Lists all days and temperatures in a tabular format.
+	// Lists all days and temperatures in a tabular format.
 	private static void reportOne() {
+
 		sb = new StringBuilder();
-		String title = "December 2020: Temperatures in Utah \n";
+
+		String title = " 2020: Temperatures in Utah \n";
 		int highestIndex = 0;
 		int lowestIndex = 0;
 		line = createLine(LINE, '-');
@@ -91,7 +95,7 @@ public class JavaReview3 {
 
 		// Add the title.
 		sb.append(line);
-		sb.append(title);
+		sb.append(titleMonth + title);
 		sb.append(line);
 
 		// Create the header for the table. Print out and add to file.
@@ -114,8 +118,8 @@ public class JavaReview3 {
 
 		String[] row = new String[HEADER_TEMPLATE.split("\s+").length];
 
-		//		String[] row = new String[];
-		// Create each row entry. 
+		// String[] row = new String[];
+		// Create each row entry.
 		for (int i = 0; i < data.length; i++) {
 
 			// Check for the highest and lowest.
@@ -142,10 +146,10 @@ public class JavaReview3 {
 		sb.append(line);
 
 		// The final report at the end.
-		String highest = String.format("December Highest Temperature: 12/%s: %s Average Hi: %.1f",
+		String highest = String.format("%s Highest Temperature: %s/%s: %s Average Hi: %.1f", titleMonth, monthNumber,
 				data[highestIndex][iDAY], data[highestIndex][iHIGH], sumHigh / data.length);
 
-		String lowest = String.format("December Lowest Temperature: 12/%s: %s Average Lo: %.1f",
+		String lowest = String.format("%s Lowest Temperature: %s/%s: %s Average Lo: %.1f", titleMonth, monthNumber,
 				data[lowestIndex][iDAY], data[lowestIndex][iLOW], sumLow / data.length);
 
 		sb.append(highest + NEWLINE);
@@ -169,7 +173,8 @@ public class JavaReview3 {
 
 			sb.append(String.format("%-3sHI %s", data[i][iDAY], createLine(Integer.parseInt(data[i][iHIGH]), '+')));
 			sb.append(String.format("%-3sLO %s", "", createLine(Integer.parseInt(data[i][iLOW]), '-')));
-			//			sb.append("   LO " + createLine(Integer.parseInt(data[i][high]), '+') + NEWLINE);
+			// sb.append(" LO " + createLine(Integer.parseInt(data[i][high]),
+			// '+') + NEWLINE);
 		}
 
 		sb.append(line);
@@ -182,6 +187,43 @@ public class JavaReview3 {
 	// SOME HELPER METHODS
 	// --------------------------------------------
 
+	private static void userinput() {
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.println("What month would you like to create a report for?");
+		String userIn = scanner.nextLine();
+
+		// Check for december or november.
+		while (!userIn.equalsIgnoreCase("december") && !userIn.equalsIgnoreCase("november")
+				&& !userIn.equalsIgnoreCase("12") && !userIn.equalsIgnoreCase("11")) {
+
+			System.out.println("What month would you like to create a report for?");
+			userIn = scanner.nextLine();
+		}
+
+		titleMonth = null;
+		monthNumber = null;
+
+		switch (userIn.toLowerCase()) {
+			case "11" :
+				titleMonth = "November";
+				monthNumber = "11";
+				break;
+			case "november" :
+				titleMonth = "November";
+				monthNumber = "11";
+				break;
+			case "12" :
+				titleMonth = "December";
+				monthNumber = "12";
+			case "december" :
+				titleMonth = "December";
+				monthNumber = "12";
+				break;
+
+		}
+	}
+
 	// Calculates the variance between two numbers.
 	private static String variance(int a, int b) {
 		if ((a - b) < 0)
@@ -190,13 +232,14 @@ public class JavaReview3 {
 		return Integer.toString(a - b);
 	}
 
-	// Takes a String array and and prints a row for the table. 
+	// Takes a String array and and prints a row for the table.
 	private static void printRow(String[] elements, int... widths) {
 
 		System.out.print(createRow(elements, widths));
 	}
 
-	// Creates a row based on the string array passed in and with the corresponding column widths.
+	// Creates a row based on the string array passed in and with the
+	// corresponding column widths.
 	private static String createRow(String[] elements, int... widths) {
 
 		StringBuilder sb = new StringBuilder();
