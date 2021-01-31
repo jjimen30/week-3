@@ -11,6 +11,7 @@ import file.FileOutput;
  * 
  * Assignment: Java Review 3 Description:
  * 
+ * CSIS
  * This assignment is an extension of the Java Review 2 assignment. In this
  * assignment you are asked to modify your Revew 2 assignment code to obtain the
  * data for the temperatures report from a database instead of a csv file.
@@ -19,7 +20,7 @@ import file.FileOutput;
  * {@code FileOutput}, Used to output to a text file.
  * 
  * All of the libraries were written by me except the mysql-connector-java API.
- * 
+ * 	
  * @author jorgejimenez
  *
  */
